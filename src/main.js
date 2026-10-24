@@ -1,3 +1,4 @@
+import { createDesign } from './ui/design.js';
 import { initLayout } from './ui/layout.js';
 import { createExplorer } from './ui/explorer.js';
 import { createEditor, langFor } from './ui/editor.js';
@@ -9,13 +10,15 @@ import { readFrame } from './core/frameParser.js';
 const $ = id => document.getElementById(id), docs = [];
 let cur = null;
 const layout = initLayout();
+const design = createDesign($('design'));
 const explorer = createExplorer($('tree'), e => openEntry(e));
 
 const looksPlain = t => /<bmp_begin>|<frame>|<stage>|<background>|^\s*#|\bname:/m.test(t);
-function info(d) {
+function info0(d) {
   const f = getFrames(d.ed.value); let bad = 0; f.forEach(x => { try { if (!readFrame(x)) bad++; } catch { bad++; } });
   $('stInfo').textContent = `${f.length} frame${bad ? `, ${bad} error` : ''}${d.encrypted ? ' · terenkripsi' : ''}`;
 }
+let it; const info = d => { clearTimeout(it); it = setTimeout(() => info0(d), 350); };
 function renderTabs() {
   $('tabs').innerHTML = '';
   docs.forEach(d => {
@@ -24,13 +27,13 @@ function renderTabs() {
     t.onclick = e => e.target === x ? close(d) : activate(d); $('tabs').appendChild(t);
   });
 }
-function activate(d) { cur = d; docs.forEach(o => o.ed.show(o === d)); renderTabs(); if (d) info(d); else $('stInfo').textContent = ''; }
+function activate(d) { cur = d; docs.forEach(o => o.ed.show(o === d)); renderTabs(); if (d) info(d); else $('stInfo').textContent = ''; design.follow(d?.ed); }
 function close(d) { if (d.dirty && !confirm(`Tutup ${d.name} tanpa menyimpan?`)) return; d.ed.el.remove(); docs.splice(docs.indexOf(d), 1); activate(docs[docs.length - 1] || null); }
 function addDoc(name, text, encrypted) {
   const d = { name, encrypted, dirty: false };
   d.ed = createEditor($('editorHost'), { text, lang: langFor(name, text),
     onChange: () => { if (!d.dirty) { d.dirty = true; renderTabs(); } info(d); },
-    onCursor: (l, c) => { $('stPos').textContent = `Ln ${l}, Col ${c}`; } });
+    onCursor: (l, c) => { $('stPos').textContent = `Ln ${l}, Col ${c}`; if (d === cur) design.follow(d.ed); } });
   docs.push(d); activate(d); layout.closeDrawer(); d.ed.focus();
 }
 async function openEntry({ path, file }) {
@@ -41,6 +44,7 @@ async function openEntry({ path, file }) {
 }
 $('btnOpenFolder').onclick = async () => { const l = await pickFolder(); if (l.length) explorer.set(l); };
 $('btnOpenFile').onclick = async () => { for (const e of await pickFiles()) await openEntry(e); };
+$('btnDesign').onclick = () => { document.body.classList.toggle('des'); design.follow(cur?.ed); };
 $('btnNew').onclick = async () => { const r = await fetch('src/templates/Char.dat'); addDoc('Baru.dat', await r.text(), false); };
 $('btnSave').onclick = async () => {
   if (!cur) return; const t = cur.ed.value;
