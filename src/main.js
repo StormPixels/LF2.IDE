@@ -49,3 +49,5 @@ $('btnSave').onclick = async () => {
     cur.dirty = false; renderTabs(); $('stInfo').textContent = 'Tersimpan: ' + where;
   } catch (e) { alert('Gagal menyimpan: ' + (e.message || e)); }
 };
+
+window.__lf2ok = true;
