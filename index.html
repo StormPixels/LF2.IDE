@@ -15,5 +15,19 @@
 </div>
 <footer id="status"><span id="stPos">Ln 1, Col 1</span><span id="stInfo"></span></footer>
 <div id="scrim"></div>
+<script>
+/* Diagnostik: jika aplikasi gagal start, tampilkan file yang hilang */
+var NEED=['src/main.js','src/core/crypto.js','src/core/tokenizer.js','src/core/models.js','src/core/frameParser.js','src/core/lang.js',
+ 'src/ui/layout.js','src/ui/explorer.js','src/ui/editor.js','src/ui/styles.css','src/platform/files.js','src/templates/Char.dat'];
+function lf2diag(extra){
+  Promise.all(NEED.map(function(f){return fetch(f).then(function(r){return r.ok?null:f}).catch(function(){return f})})).then(function(m){
+    m=m.filter(Boolean); var d=document.createElement('div');
+    d.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;z-index:99;background:#7a1f1f;color:#fff;padding:10px;border-radius:8px;font:13px monospace;white-space:pre-wrap';
+    d.textContent='LF2 IDE gagal start.\n'+(m.length?'File hilang/salah folder:\n- '+m.join('\n- '):'Semua file ada, error lain:\n'+(extra||'tidak diketahui'));
+    document.body.appendChild(d);});
+}
+window.addEventListener('error',function(e){window.__err=e.message});
+setTimeout(function(){ if(!window.__lf2ok) lf2diag(window.__err); },2500);
+</script>
 <script type="module" src="src/main.js"></script>
 </body></html>
