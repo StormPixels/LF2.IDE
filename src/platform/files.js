@@ -6,6 +6,7 @@ const pick = (opts) => new Promise(res => {
 export const pickFolder = async () => (await pick({ multiple: true, webkitdirectory: true }))
   .map(f => ({ path: f.webkitRelativePath || f.name, file: f }));
 export const pickFiles = async () => (await pick({ multiple: true })).map(f => ({ path: f.name, file: f }));
+export const pickImages = async () => (await pick({ multiple: true, accept: 'image/*,.bmp' }));
 export const readBytes = async (file) => new Uint8Array(await file.arrayBuffer());
 const cap = () => window.Capacitor?.isNativePlatform?.() ? window.Capacitor.Plugins.Filesystem : null;
 const b64 = bytes => { let s = ''; for (let i = 0; i < bytes.length; i += 8192) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 8192)); return btoa(s); };
