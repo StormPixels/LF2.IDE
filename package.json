@@ -1,0 +1,13 @@
+{
+  "name": "lf2ide-mobile", "version": "0.1.0", "type": "module", "private": true,
+  "scripts": {
+    "test": "node test/core.test.js",
+    "build:web": "node scripts/build-web.js"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/cli": "^6.1.2",
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/filesystem": "^6.0.1"
+  }
+}
