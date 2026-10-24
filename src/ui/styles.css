@@ -46,3 +46,8 @@ body.des #design{display:flex}
 .df{display:grid;grid-template-columns:1fr 1fr;gap:5px 8px;font-size:12px}.df i{grid-column:1/-1;color:var(--dim)}.dt{grid-column:1/-1;font-weight:700;color:var(--acc)}
 .df label{display:flex;align-items:center;gap:5px;justify-content:space-between}
 .df input{width:56px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:5px;padding:4px}
+.dm{font-size:12px;color:var(--dim);min-height:1em}
+/* editor virtual: scroll native di .ed */
+.ed{overflow:auto;-webkit-overflow-scrolling:touch}
+.ed .sp{position:absolute;top:0;left:0;pointer-events:none}
+.ed pre,.ed textarea{position:absolute;left:0;inset:auto;top:0;margin:0;border:0;padding:0 8px;white-space:pre;overflow:hidden;resize:none;transform:none;will-change:auto}
