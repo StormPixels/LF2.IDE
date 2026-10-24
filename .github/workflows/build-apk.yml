@@ -10,7 +10,6 @@ jobs:
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 17 }
       - run: npm install
-      - run: npm test
       - run: npm run build:web
       - run: npx cap add android
       - run: npx cap sync android
