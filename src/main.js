@@ -18,7 +18,7 @@ function info0(d) {
   const f = getFrames(d.ed.value); let bad = 0; f.forEach(x => { try { if (!readFrame(x)) bad++; } catch { bad++; } });
   $('stInfo').textContent = `${f.length} frame${bad ? `, ${bad} error` : ''}${d.encrypted ? ' · terenkripsi' : ''}`;
 }
-let it; const info = d => { clearTimeout(it); it = setTimeout(() => info0(d), 350); };
+let it; const info = d => { clearTimeout(it); it = setTimeout(() => (window.requestIdleCallback || setTimeout)(() => info0(d)), 900); };
 function renderTabs() {
   $('tabs').innerHTML = '';
   docs.forEach(d => {
@@ -37,12 +37,13 @@ function addDoc(name, text, encrypted) {
   docs.push(d); activate(d); layout.closeDrawer(); d.ed.focus();
 }
 async function openEntry({ path, file }) {
+  if (/\.(bmp|png|gif|jpe?g)$/i.test(path)) { await design.addSprites([file]); $('stInfo').textContent = 'Sprite dimuat: ' + file.name; return; }
   const bytes = await readBytes(file), name = path.split('/').pop();
   let text = new TextDecoder('latin1').decode(bytes), enc = false;
   if (/\.(dat|txt)$/i.test(name) && !looksPlain(text)) { text = decrypt(bytes); enc = true; }
   addDoc(name, text, enc);
 }
-$('btnOpenFolder').onclick = async () => { const l = await pickFolder(); if (l.length) explorer.set(l); };
+$('btnOpenFolder').onclick = async () => { const l = await pickFolder(); if (l.length) { explorer.set(l); design.addSprites(l.filter(e => /\.(bmp|png)$/i.test(e.path)).map(e => e.file)); } };
 $('btnOpenFile').onclick = async () => { for (const e of await pickFiles()) await openEntry(e); };
 $('btnDesign').onclick = () => { document.body.classList.toggle('des'); design.follow(cur?.ed); };
 $('btnNew').onclick = async () => { const r = await fetch('src/templates/Char.dat'); addDoc('Baru.dat', await r.text(), false); };
